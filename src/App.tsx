@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { generateTongueTwister } from "./services/geminiService";
-import { Twister } from "./types";
+import type { Twister } from "./types";
 
 function App() {
   const [twister, setTwister] = useState<Twister | null>(null);

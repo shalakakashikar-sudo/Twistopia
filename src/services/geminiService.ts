@@ -1,4 +1,4 @@
-import { Difficulty, Twister } from "../types";
+import type { Difficulty, Twister } from "../types";
 
 export const generateTongueTwister = async (
   difficulty: Difficulty

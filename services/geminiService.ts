@@ -63,13 +63,16 @@ export const generateTongueTwister = async (difficulty: Difficulty, level: numbe
   }
 
   try {
-    const prompt = `Generate a creative, fun, and challenging tongue twister in English for 'Twistopia: The Poet's Gym'. 
+    const prompt = `Generate a creative, fun, and challenging tongue twister in English for 'Twistopia'. 
     Difficulty Level: ${difficulty}. 
     The text should be a single coherent phrase or sentence that feels like a 'vocal workout'.
+    
+    The 'topic' field MUST be a specific linguistic classification of the primary challenge (e.g., 'Sibilance (S/SH)', 'Plosive P-Sounds', 'Dental Fricatives', 'Lateral Liquids', 'Nasal N-Sounds', 'Glide Transitions').
+    
     Return JSON only.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -77,7 +80,7 @@ export const generateTongueTwister = async (difficulty: Difficulty, level: numbe
           type: Type.OBJECT,
           properties: {
             text: { type: Type.STRING, description: "The tongue twister text" },
-            topic: { type: Type.STRING, description: "A short 1-2 word topic/theme (e.g. Sibilance Training, Plosive Power)" },
+            topic: { type: Type.STRING, description: "The technical linguistic type of the twister" },
             difficulty: { type: Type.STRING, enum: ["Easy", "Medium", "Hard"] }
           },
           required: ["text", "topic", "difficulty"]
@@ -120,7 +123,7 @@ export const gradePronunciation = async (
   
   try {
     const prompt = `
-      You are the Head Vocal Coach at 'Twistopia: The Poet's Gym'.
+      You are the Head Vocal Coach at 'Twistopia'.
       
       Challenge: "${twister.text}"
       Target Reps: ${twister.repetitionCount} sets.
@@ -139,7 +142,7 @@ export const gradePronunciation = async (
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: {
         parts: [
           { text: prompt },

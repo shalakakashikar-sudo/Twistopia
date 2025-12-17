@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GameMenu } from './components/GameMenu';
 import { Gameplay } from './components/Gameplay';
 import { ResultView } from './components/ResultView';
+import { Mascot } from './components/Mascot';
 import { GameState, Difficulty, Twister, GradingResult, PlayerStats } from './types';
 import { generateTongueTwister, gradePronunciation } from './services/geminiService';
 
@@ -28,11 +29,6 @@ const App: React.FC = () => {
     localStorage.setItem('twistopia_stats', JSON.stringify(stats));
   }, [stats]);
 
-  // Level Up Logic: Level = 1 + floor(XP / 100)
-  // Level 1: 0-99 XP
-  // Level 2: 100-199 XP
-  // Level 3: 200 XP (Unlocks Medium)
-  // Level 5: 400 XP (Unlocks Hard)
   const calculateLevel = (xp: number) => 1 + Math.floor(xp / 100);
 
   const startGame = async (diff: Difficulty) => {
@@ -40,7 +36,6 @@ const App: React.FC = () => {
     setGameState(GameState.LOADING_TWISTER);
     setErrorMsg(null);
     try {
-      // Pass player level for dynamic difficulty scaling
       const twister = await generateTongueTwister(diff, stats.level);
       setCurrentTwister(twister);
       setGameState(GameState.PLAYING);
@@ -58,7 +53,6 @@ const App: React.FC = () => {
     try {
       const result = await gradePronunciation(currentTwister, audioBase64, mimeType);
       
-      // Update Stats
       setStats(prev => {
         const newXP = prev.xp + result.xpEarned;
         return {
@@ -92,11 +86,14 @@ const App: React.FC = () => {
       <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-200 rounded-full blur-[100px] opacity-40 z-0 pointer-events-none"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-pink-200 rounded-full blur-[100px] opacity-40 z-0 pointer-events-none"></div>
 
+      {/* Mascot Integration */}
+      <Mascot gameState={gameState} score={lastResult?.score} />
+
       <div className="container mx-auto px-4 py-8 relative z-10 min-h-screen flex flex-col">
         
         {/* Error Toast */}
         {errorMsg && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-full shadow-lg z-50 animate-bounce">
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border-2 border-ink text-red-700 px-6 py-3 rounded-full shadow-hard z-50">
             {errorMsg}
           </div>
         )}
@@ -108,8 +105,8 @@ const App: React.FC = () => {
 
           {gameState === GameState.LOADING_TWISTER && (
             <div className="flex flex-col items-center justify-center space-y-6">
-              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-xl font-display font-medium text-gray-600 animate-pulse">
+              <div className="w-16 h-16 border-4 border-ink border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-xl font-display font-medium text-ink/60 animate-pulse">
                 Conjuring a twisty phrase...
               </p>
             </div>
@@ -136,7 +133,7 @@ const App: React.FC = () => {
           )}
         </main>
         
-        <footer className="text-center text-ink text-sm mt-8 opacity-80">
+        <footer className="text-center text-ink text-sm mt-8 opacity-80 font-bold">
           Created by Shalaka Kashikar
         </footer>
       </div>

@@ -3,10 +3,19 @@ import { Difficulty, GradingResult, Twister } from "../types";
 import { decodeAudioData, playAudioBuffer } from "../utils/audioUtils";
 import { FALLBACK_TWISTERS } from "../data/fallbackTwisters";
 
-const apiKey = process.env.API_KEY || ''; // Injected by environment
-const ai = new GoogleGenAI({ apiKey });
+// Access API key strictly from environment.
+const apiKey = process.env.API_KEY; 
+
+// Initialize AI only if key exists.
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 export const generateTongueTwister = async (difficulty: Difficulty): Promise<Twister> => {
+  // If no AI instance (missing key), fallback immediately
+  if (!ai) {
+    console.warn("API Key missing. Using offline database.");
+    return getFallbackTwister(difficulty);
+  }
+
   try {
     const prompt = `Generate a creative, fun, and challenging tongue twister in English. 
     Difficulty Level: ${difficulty}. 
@@ -36,17 +45,19 @@ export const generateTongueTwister = async (difficulty: Difficulty): Promise<Twi
 
   } catch (error) {
     console.warn("Gemini generation failed, switching to fallback database.", error);
-    
-    // Fallback logic
-    const candidates = FALLBACK_TWISTERS.filter(t => t.difficulty === difficulty);
-    if (candidates.length === 0) {
-      // Emergency fallback if difficulty mismatch (shouldn't happen with current data)
-      return FALLBACK_TWISTERS[0];
-    }
-    const randomIndex = Math.floor(Math.random() * candidates.length);
-    return candidates[randomIndex];
+    return getFallbackTwister(difficulty);
   }
 };
+
+// Helper for fallback logic
+function getFallbackTwister(difficulty: Difficulty): Twister {
+  const candidates = FALLBACK_TWISTERS.filter(t => t.difficulty === difficulty);
+  if (candidates.length === 0) {
+    return FALLBACK_TWISTERS[0];
+  }
+  const randomIndex = Math.floor(Math.random() * candidates.length);
+  return candidates[randomIndex];
+}
 
 export const gradePronunciation = async (
   twisterText: string, 
@@ -54,8 +65,9 @@ export const gradePronunciation = async (
   mimeType: string
 ): Promise<GradingResult> => {
   
-  // Note: We cannot easily fallback for grading without a complex client-side STT library.
-  // We will let this throw if the API fails, so the UI can show the specific error to the user.
+  if (!ai) {
+    throw new Error("AI features are unavailable (Missing API Key). Cannot grade pronunciation.");
+  }
   
   const prompt = `
     I will provide an audio recording of a user trying to say the following tongue twister: "${twisterText}".
@@ -103,6 +115,8 @@ export const gradePronunciation = async (
 
 export const speakText = async (text: string): Promise<void> => {
   try {
+    if (!ai) throw new Error("API Key missing");
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: text }] }],
@@ -110,7 +124,7 @@ export const speakText = async (text: string): Promise<void> => {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Kore' }, // Kore, Puck, Charon, Fenrir, Zephyr
+            prebuiltVoiceConfig: { voiceName: 'Kore' }, 
           },
         },
       },
@@ -119,30 +133,29 @@ export const speakText = async (text: string): Promise<void> => {
     const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
     if (!base64Audio) throw new Error("No audio generated");
 
-    // Web Audio API playback
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
     const audioBuffer = await decodeAudioData(base64Audio, audioContext, 24000);
     playAudioBuffer(audioBuffer, audioContext);
 
   } catch (error) {
-    console.warn("Gemini TTS failed, switching to browser SpeechSynthesis.", error);
+    console.warn("Gemini TTS failed or offline, switching to browser SpeechSynthesis.", error);
     
     // Browser fallback
     return new Promise((resolve, reject) => {
       if (!('speechSynthesis' in window)) {
         console.error("Browser does not support TTS");
-        resolve(); // Resolve anyway to unblock UI
+        resolve(); 
         return;
       }
       
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
-      utterance.rate = 0.9; // Slightly slower for clarity
+      utterance.rate = 0.9; 
       
       utterance.onend = () => resolve();
       utterance.onerror = (e) => {
         console.error("Browser TTS error", e);
-        resolve(); // Resolve to unblock UI
+        resolve();
       };
       
       window.speechSynthesis.speak(utterance);

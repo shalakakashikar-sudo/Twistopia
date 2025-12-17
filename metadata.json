@@ -1,0 +1,7 @@
+{
+  "name": "Twistopia",
+  "description": "An interactive tongue twister game powered by Gemini. Challenge your pronunciation, get AI grading, and have fun!",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

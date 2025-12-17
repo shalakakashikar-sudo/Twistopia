@@ -16,56 +16,62 @@ export const ResultView: React.FC<ResultViewProps> = ({ result, twister, current
   const isGood = result.score >= 70 && result.score < 90;
   
   return (
-    <div className="w-full max-w-2xl mx-auto text-center space-y-6 animate-fade-in-up">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 border-t-8 border-primary overflow-hidden relative">
+    <div className="w-full max-w-xl mx-auto text-center space-y-8 animate-fade-in-up py-8">
+      <div className="bg-white rounded-3xl shadow-soft p-10 border border-slate-50 relative">
         
-        <div className="mb-4">
-          <span className="text-6xl md:text-8xl block mb-2">
+        <div className="mb-6">
+          <span className="text-7xl block mb-4 filter drop-shadow-sm">
             {isPerfect ? '🏆' : isGood ? '👏' : '🤔'}
           </span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-800">
-            {isPerfect ? 'Masterful!' : isGood ? 'Great Job!' : 'Nice Try!'}
+          <h2 className="text-3xl font-display font-semibold text-slate-800">
+            {isPerfect ? 'Perfection!' : isGood ? 'Well Done' : 'Keep Trying'}
           </h2>
         </div>
 
-        <div className="flex justify-center items-end gap-2 mb-4 text-gray-800">
-           <div className="text-center">
-             <span className="text-6xl font-bold">{result.score}</span>
-             <span className="text-2xl font-medium text-gray-400 mb-2">/100</span>
+        <div className="flex flex-col items-center mb-8">
+           <div className="text-6xl font-display font-light text-slate-800">
+             {result.score}
+             <span className="text-2xl text-slate-300 ml-1">/100</span>
+           </div>
+           
+           <div className="mt-4 animate-fade-in">
+              <span className="inline-block bg-yellow-50 text-yellow-700 px-4 py-1.5 rounded-full font-bold text-sm border border-yellow-100">
+                  +{result.xpEarned} XP
+              </span>
            </div>
         </div>
 
-        {/* XP Gain Animation */}
-        <div className="mb-6 animate-pulse">
-            <span className="inline-block bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold text-lg border border-yellow-300">
-                +{result.xpEarned} XP Earned
-            </span>
+        <div className="bg-slate-50 rounded-2xl p-6 mb-8 text-left border border-slate-100">
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">AI Feedback</p>
+          <p className="text-slate-600 leading-relaxed font-light">"{result.feedback}"</p>
         </div>
 
-        <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
-          <p className="text-xs text-gray-400 uppercase tracking-wider font-bold mb-1">AI Feedback</p>
-          <p className="text-gray-700 italic">"{result.feedback}"</p>
+        {/* Minimal XP Bar */}
+        <div className="mb-8">
+            <div className="flex justify-between text-xs text-slate-400 mb-2 font-medium tracking-wide">
+                <span>LEVEL {currentStats.level}</span>
+                <span>{currentStats.xp % 100} / 100 XP</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                <div 
+                    className="bg-slate-800 h-full transition-all duration-1000 ease-out" 
+                    style={{ width: `${currentStats.xp % 100}%` }}
+                ></div>
+            </div>
         </div>
 
-        <div className="w-full bg-gray-100 rounded-full h-2 mb-8 overflow-hidden">
-            <div 
-                className="bg-primary h-full" 
-                style={{ width: `${currentStats.xp % 100}%` }}
-            ></div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Button onClick={onRetry} variant="secondary">
-            ↺ Retry Same
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Button onClick={onRetry} variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300">
+            Retry Same
           </Button>
-          <Button onClick={onNext} variant="primary">
-            Next Challenge →
+          <Button onClick={onNext} variant="primary" className="bg-slate-900 text-white hover:bg-black shadow-none">
+            Next Challenge
           </Button>
         </div>
         
-        <div className="mt-6">
-           <button onClick={onMenu} className="text-gray-400 hover:text-gray-600 text-sm underline">
-             Return to Menu
+        <div className="mt-8">
+           <button onClick={onMenu} className="text-slate-400 hover:text-slate-600 text-xs font-semibold tracking-widest uppercase transition-colors">
+             Back to Menu
            </button>
         </div>
       </div>

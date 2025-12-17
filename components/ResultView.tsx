@@ -1,25 +1,25 @@
 import React from 'react';
-import { GradingResult, Twister } from '../types';
+import { GradingResult, Twister, PlayerStats } from '../types';
 import { Button } from './Button';
 
 interface ResultViewProps {
   result: GradingResult;
   twister: Twister;
+  currentStats: PlayerStats;
   onNext: () => void;
   onRetry: () => void;
   onMenu: () => void;
 }
 
-export const ResultView: React.FC<ResultViewProps> = ({ result, twister, onNext, onRetry, onMenu }) => {
+export const ResultView: React.FC<ResultViewProps> = ({ result, twister, currentStats, onNext, onRetry, onMenu }) => {
   const isPerfect = result.score >= 90;
   const isGood = result.score >= 70 && result.score < 90;
   
   return (
-    <div className="w-full max-w-2xl mx-auto text-center space-y-8 animate-fade-in-up">
+    <div className="w-full max-w-2xl mx-auto text-center space-y-6 animate-fade-in-up">
       <div className="bg-white rounded-3xl shadow-2xl p-8 border-t-8 border-primary overflow-hidden relative">
-        {/* Background Confetti/Effects could go here */}
         
-        <div className="mb-6">
+        <div className="mb-4">
           <span className="text-6xl md:text-8xl block mb-2">
             {isPerfect ? '🏆' : isGood ? '👏' : '🤔'}
           </span>
@@ -28,9 +28,18 @@ export const ResultView: React.FC<ResultViewProps> = ({ result, twister, onNext,
           </h2>
         </div>
 
-        <div className="flex justify-center items-end gap-2 mb-6 text-gray-800">
-           <span className="text-6xl font-bold">{result.score}</span>
-           <span className="text-2xl font-medium text-gray-400 mb-2">/ 100</span>
+        <div className="flex justify-center items-end gap-2 mb-4 text-gray-800">
+           <div className="text-center">
+             <span className="text-6xl font-bold">{result.score}</span>
+             <span className="text-2xl font-medium text-gray-400 mb-2">/100</span>
+           </div>
+        </div>
+
+        {/* XP Gain Animation */}
+        <div className="mb-6 animate-pulse">
+            <span className="inline-block bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold text-lg border border-yellow-300">
+                +{result.xpEarned} XP Earned
+            </span>
         </div>
 
         <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
@@ -38,8 +47,11 @@ export const ResultView: React.FC<ResultViewProps> = ({ result, twister, onNext,
           <p className="text-gray-700 italic">"{result.feedback}"</p>
         </div>
 
-        <div className="text-sm text-gray-400 mb-8">
-          Challenge: <span className="text-gray-600">{twister.text}</span>
+        <div className="w-full bg-gray-100 rounded-full h-2 mb-8 overflow-hidden">
+            <div 
+                className="bg-primary h-full" 
+                style={{ width: `${currentStats.xp % 100}%` }}
+            ></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

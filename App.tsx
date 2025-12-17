@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameMenu } from './components/GameMenu';
 import { Gameplay } from './components/Gameplay';
 import { ResultView } from './components/ResultView';
-import { GameState, Difficulty, Twister, GradingResult } from './types';
+import { GameState, Difficulty, Twister, GradingResult, PlayerStats } from './types';
 import { generateTongueTwister, gradePronunciation } from './services/geminiService';
+
+const INITIAL_STATS: PlayerStats = {
+  xp: 0,
+  level: 1,
+  twistersCompleted: 0
+};
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(GameState.MENU);
@@ -11,18 +17,36 @@ const App: React.FC = () => {
   const [currentTwister, setCurrentTwister] = useState<Twister | null>(null);
   const [lastResult, setLastResult] = useState<GradingResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
+  // Persistence
+  const [stats, setStats] = useState<PlayerStats>(() => {
+    const saved = localStorage.getItem('twistopia_stats');
+    return saved ? JSON.parse(saved) : INITIAL_STATS;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('twistopia_stats', JSON.stringify(stats));
+  }, [stats]);
+
+  // Level Up Logic: Level = 1 + floor(XP / 100)
+  // Level 1: 0-99 XP
+  // Level 2: 100-199 XP
+  // Level 3: 200 XP (Unlocks Medium)
+  // Level 5: 400 XP (Unlocks Hard)
+  const calculateLevel = (xp: number) => 1 + Math.floor(xp / 100);
 
   const startGame = async (diff: Difficulty) => {
     setDifficulty(diff);
     setGameState(GameState.LOADING_TWISTER);
     setErrorMsg(null);
     try {
-      const twister = await generateTongueTwister(diff);
+      // Pass player level for dynamic difficulty scaling
+      const twister = await generateTongueTwister(diff, stats.level);
       setCurrentTwister(twister);
       setGameState(GameState.PLAYING);
     } catch (err) {
       console.error(err);
-      setErrorMsg("Failed to generate a tongue twister. Check your connection or API key.");
+      setErrorMsg("Failed to generate. Check connection.");
       setGameState(GameState.MENU);
     }
   };
@@ -32,19 +56,30 @@ const App: React.FC = () => {
     
     setGameState(GameState.GRADING);
     try {
-      const result = await gradePronunciation(currentTwister.text, audioBase64, mimeType);
+      const result = await gradePronunciation(currentTwister, audioBase64, mimeType);
+      
+      // Update Stats
+      setStats(prev => {
+        const newXP = prev.xp + result.xpEarned;
+        return {
+          xp: newXP,
+          level: calculateLevel(newXP),
+          twistersCompleted: prev.twistersCompleted + 1
+        };
+      });
+
       setLastResult(result);
       setGameState(GameState.RESULT);
     } catch (err) {
       console.error(err);
-      setErrorMsg("Failed to grade the audio. Please try recording again.");
-      setGameState(GameState.PLAYING); // Go back to playing so they can retry
+      setErrorMsg("Failed to grade. Please retry.");
+      setGameState(GameState.PLAYING);
       setTimeout(() => setErrorMsg(null), 3000);
     }
   };
 
   const handleNext = () => {
-    startGame(difficulty); // Generate new one with same difficulty
+    startGame(difficulty);
   };
 
   const handleRetry = () => {
@@ -68,7 +103,7 @@ const App: React.FC = () => {
 
         <main className="flex-grow flex flex-col justify-center">
           {gameState === GameState.MENU && (
-            <GameMenu onStart={startGame} />
+            <GameMenu onStart={startGame} stats={stats} />
           )}
 
           {gameState === GameState.LOADING_TWISTER && (
@@ -96,12 +131,13 @@ const App: React.FC = () => {
               onNext={handleNext}
               onRetry={handleRetry}
               onMenu={() => setGameState(GameState.MENU)}
+              currentStats={stats}
             />
           )}
         </main>
         
         <footer className="text-center text-gray-400 text-sm mt-8">
-          Powered by Google Gemini 2.5 • Created by Shalaka Kashikar
+          Created by Shalaka Kashikar
         </footer>
       </div>
     </div>

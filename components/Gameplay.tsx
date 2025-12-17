@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Twister, GameState } from '../types';
+import { Twister } from '../types';
 import { Button } from './Button';
 import { AudioRecorder } from '../utils/audioUtils';
 import { speakText } from '../services/geminiService';
@@ -16,10 +16,9 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const recorderRef = useRef<AudioRecorder>(new AudioRecorder());
   
-  // Clean up recorder on unmount
   useEffect(() => {
     return () => {
-      // Logic to cleanup if needed, mostly handled in stop()
+      // Cleanup
     };
   }, []);
 
@@ -38,7 +37,6 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
 
   const handleToggleRecord = async () => {
     if (isRecording) {
-      // STOP Recording
       setIsRecording(false);
       try {
         const { base64, mimeType } = await recorderRef.current.stop();
@@ -47,7 +45,6 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
         console.error("Recording error", e);
       }
     } else {
-      // START Recording
       try {
         await recorderRef.current.start();
         setIsRecording(true);
@@ -59,7 +56,7 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-8 animate-fade-in">
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-6 animate-fade-in">
       {/* Header */}
       <div className="w-full flex justify-between items-center px-4">
         <button onClick={onBack} className="text-gray-500 hover:text-primary transition-colors flex items-center gap-1 font-medium">
@@ -76,11 +73,24 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
       <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full text-center relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-secondary to-accent" />
         
+        {/* Repetition Badge */}
+        <div className="absolute top-4 right-4 animate-pulse">
+          <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+             TARGET: {twister.repetitionCount}x
+          </span>
+        </div>
+        
         <p className="text-gray-400 font-display uppercase tracking-widest text-sm mb-4">Topic: {twister.topic}</p>
         
         <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-800 leading-tight mb-8">
           "{twister.text}"
         </h2>
+
+        {twister.repetitionCount > 1 && (
+            <p className="text-secondary font-bold mb-6 text-lg">
+                🔥 Repeat it {twister.repetitionCount} times fast!
+            </p>
+        )}
 
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center mt-8">
           <Button 
@@ -111,9 +121,9 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
          </div>
          
          <p className="text-gray-600 font-medium">
-           {isGrading ? 'AI is analyzing your voice...' : 
-            isRecording ? 'Listening... Tap to stop' : 
-            'Tap mic to start recording'}
+           {isGrading ? 'AI Judge is deciding...' : 
+            isRecording ? 'Recording... Say it clearly!' : 
+            'Tap mic to start'}
          </p>
       </div>
     </div>

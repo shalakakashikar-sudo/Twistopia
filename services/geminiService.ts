@@ -33,13 +33,33 @@ const getApiKey = (): string => {
 };
 
 const apiKey = getApiKey();
-// Initialize AI only if key exists.
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
-export const generateTongueTwister = async (difficulty: Difficulty): Promise<Twister> => {
+// Game Rules - Dynamic Difficulty
+const getRepetitionCount = (difficulty: Difficulty, level: number = 1): number => {
+  // Scaling logic: Increase reps as level increases to keep it challenging
+  switch (difficulty) {
+    case Difficulty.EASY:
+      // Base 5, +1 every 3 levels
+      return 5 + Math.floor((level - 1) / 3);
+    case Difficulty.MEDIUM:
+      // Base 3, +1 every 4 levels
+      return 3 + Math.floor((level - 1) / 4);
+    case Difficulty.HARD:
+      // Base 2, +1 every 5 levels
+      return 2 + Math.floor((level - 1) / 5);
+    default:
+      return 3;
+  }
+};
+
+export const generateTongueTwister = async (difficulty: Difficulty, level: number): Promise<Twister> => {
+  const repetitionCount = getRepetitionCount(difficulty, level);
+
   // If no AI instance (missing key), fallback immediately
   if (!ai) {
-    return getFallbackTwister(difficulty);
+    const fallback = getFallbackTwister(difficulty);
+    return { ...fallback, repetitionCount };
   }
 
   try {
@@ -67,11 +87,13 @@ export const generateTongueTwister = async (difficulty: Difficulty): Promise<Twi
 
     const text = response.text;
     if (!text) throw new Error("No response from Gemini");
-    return JSON.parse(text) as Twister;
+    const result = JSON.parse(text);
+    return { ...result, repetitionCount } as Twister;
 
   } catch (error) {
     console.warn("Gemini generation failed, switching to fallback database.", error);
-    return getFallbackTwister(difficulty);
+    const fallback = getFallbackTwister(difficulty);
+    return { ...fallback, repetitionCount };
   }
 };
 
@@ -79,14 +101,14 @@ export const generateTongueTwister = async (difficulty: Difficulty): Promise<Twi
 function getFallbackTwister(difficulty: Difficulty): Twister {
   const candidates = FALLBACK_TWISTERS.filter(t => t.difficulty === difficulty);
   if (candidates.length === 0) {
-    return FALLBACK_TWISTERS[0];
+    return { ...FALLBACK_TWISTERS[0], repetitionCount: 5 }; // Default fallback rep
   }
   const randomIndex = Math.floor(Math.random() * candidates.length);
   return candidates[randomIndex];
 }
 
 export const gradePronunciation = async (
-  twisterText: string, 
+  twister: Twister, 
   audioBase64: string, 
   mimeType: string
 ): Promise<GradingResult> => {
@@ -98,15 +120,20 @@ export const gradePronunciation = async (
   
   try {
     const prompt = `
-      I will provide an audio recording of a user trying to say the following tongue twister: "${twisterText}".
+      You are a strict but fair judge in a tongue twister game.
       
-      Please analyze the audio for pronunciation accuracy, clarity, and speed.
-      Ignore minor background noise. Focus on the words.
+      The Challenge: "${twister.text}"
+      REQUIRED REPETITIONS: ${twister.repetitionCount} times.
+      
+      I will provide an audio recording. 
+      1. Check if the user said the phrase exactly ${twister.repetitionCount} times.
+      2. If they said it fewer times, the maximum score is 50.
+      3. Analyze pronunciation accuracy, clarity, and speed.
       
       Return a JSON object with:
-      - score: integer 0-100 (100 is perfect)
-      - feedback: A friendly, short constructive comment (max 2 sentences).
-      - isCorrect: boolean (true if > 80% words are identifiable and correct).
+      - score: integer 0-100.
+      - feedback: A short comment. Mention if they missed repetitions.
+      - isCorrect: boolean (true if score > 75).
     `;
 
     const response = await ai.models.generateContent({
@@ -138,7 +165,12 @@ export const gradePronunciation = async (
 
     const text = response.text;
     if (!text) throw new Error("No grading response from Gemini");
-    return JSON.parse(text) as GradingResult;
+    
+    const result = JSON.parse(text);
+    return {
+      ...result,
+      xpEarned: result.score // XP equals the score
+    };
 
   } catch (error) {
     console.warn("Gemini grading failed.", error);
@@ -147,12 +179,11 @@ export const gradePronunciation = async (
 };
 
 const getFallbackGrading = (): GradingResult => {
-  // If we are here, the AI failed or key is missing.
-  // We cannot accurately grade offline.
   return {
     score: 0,
-    feedback: "⚠️ AI Offline: Cannot grade pronunciation. Please check your API Key configuration in Vercel.",
-    isCorrect: false
+    feedback: "⚠️ AI Offline: Cannot grade. Check API Key.",
+    isCorrect: false,
+    xpEarned: 0
   };
 };
 
@@ -183,24 +214,16 @@ export const speakText = async (text: string): Promise<void> => {
   } catch (error) {
     console.warn("Gemini TTS failed or offline, switching to browser SpeechSynthesis.", error);
     
-    // Browser fallback
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (!('speechSynthesis' in window)) {
-        console.error("Browser does not support TTS");
         resolve(); 
         return;
       }
-      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       utterance.rate = 0.9; 
-      
       utterance.onend = () => resolve();
-      utterance.onerror = (e) => {
-        console.error("Browser TTS error", e);
-        resolve();
-      };
-      
+      utterance.onerror = () => resolve();
       window.speechSynthesis.speak(utterance);
     });
   }

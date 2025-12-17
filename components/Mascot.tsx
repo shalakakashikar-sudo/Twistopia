@@ -19,72 +19,83 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
   const [gesture, setGesture] = useState<'none' | 'bounce' | 'shake' | 'glow'>('none');
   
   const bubbleTimeoutRef = useRef<number | null>(null);
-  const lastStateRef = useRef<GameState>(gameState);
 
   const comments = useMemo(() => ({
     MENU: [
-      "Welcome to the Diction Dojo. Is your tongue ready for some heavy lifting?",
-      "Remember: Precision over speed. A sloppy rep is a wasted rep.",
-      "The difference between a speaker and a master is ten thousand sibilants.",
-      "Vocal cords are muscles. Hydrate them or they'll ghost you mid-sentence.",
-      "Linguistic cardio isn't just about breath; it's about structural integrity.",
-      "Your vowels look a bit soft today. Let's tighten those up.",
-      "Squeak! Diction is the ultimate flex in a world of mumbling.",
-      "Standard operating procedure: Breathe, focus, articulate, conquer.",
-      "A glottal stop is just a speed bump on the road to eloquence.",
+      "Warm up those phonemes! No tongue-cramps allowed!",
+      "Ready for your verbal heavy lifting?",
+      "Linguistic cardio starts now!",
+      "Hydrate! Sibilance is thirsty work!",
+      "Flex your vowels, athlete!",
+      "The gymnasium of grammar awaits!",
+      "Squeak! Don't forget to stretch your jaw!",
+      "Articulation is the key to Twistopian glory!",
+      "Check your posture! Shoulders back, vowels out!",
+      "Is that a glottal stop or are you just happy to see me?",
     ],
     LOADING: [
-      "Analyzing phonemic density...",
-      "Calibrating the articulators for high-torque output.",
-      "Stretching the soft palate... safety first.",
-      "Optimizing diphthong trajectories.",
-      "Heavy load incoming. Prepare for linguistic resistance.",
-      "Polishing the plosives. We want a clean pop, not a splash.",
+      "Polishing the plosives...",
+      "Stretching the diphthongs...",
+      "Calibrating the sibilance-ometer...",
+      "Sorting syllables into heavy stacks...",
+      "Calculating vocal resistance...",
+      "Buffing the affricates to a high shine!",
+      "Measuring the frequency of your fricatives...",
     ],
     PLAYING: [
-      "Drive from the diaphragm! Don't let the throat do the heavy work.",
-      "Lock your core. Let the consonants snap into place.",
-      "Find the meter. Rhythm is your best friend in a high-rep set.",
-      "Watch that transition. The 'S' to 'SH' shift is where most athletes fail.",
-      "Keep the intensity high. No slacking on the final syllable.",
-      "Focus. Your articulators are drifting. Stay centered.",
+      "Breathe from the diaphragm!",
+      "Clean sets! No stuttering on the descent!",
+      "Rhythm is 90% of the workout!",
+      "Don't let the consonants trip you up!",
+      "Watch your form! Keep it tight!",
+      "Push it! Every syllable counts!",
+      "Engage your articulators! Go, go, go!",
     ],
     RESULT_PERFECT: [
-      "Clinical. That was a masterclass in vocal precision.",
-      "Zero phonemic leakage. You've been training, haven't you?",
-      "The Syllable-Sovereign has entered the building. Bow down.",
-      "I'm actually impressed. And I once coached a parrot to recite Shakespeare.",
-      "That level of articulation is statistically improbable. Excellent.",
-      "Your diction is shredded. You could cut glass with those consonants.",
+      "Elite form! Olympic gold!",
+      "Your tongue is made of titanium!",
+      "Syllable-Sovereign status achieved!",
+      "I'm weeping... such beautiful articulation.",
+      "Pure verbal poetry! You're a beast!",
+      "Maximum gains! Your diction is shredded!",
+      "Zero vocal fat. That was clinical!",
     ],
     RESULT_GOOD: [
-      "Solid set. Your form held up under pressure.",
-      "Good recovery on that third rep. Keep that mental toughness.",
-      "Your sibilance is peaking. A bit more grit and you're elite.",
-      "Respectable effort. You're building some serious vocal mass.",
-      "Strong rhythm. Don't skip the cool-down exercises.",
+      "Strong reps! Keep that intensity!",
+      "Solid workout. I've seen worse!",
+      "Good rhythm, watch those plosives!",
+      "Vocal muscles are looking swole!",
+      "Keep pushing! You're nearly at pro level!",
+      "A few more sets and you'll be a Diction Deity!",
     ],
     RESULT_POOR: [
-      "That was more of a vocal-spasm than a vocal-set. Reset and retry.",
-      "Your vowels are sagging. Drop and give me twenty 'Proper Coppers'.",
-      "We don't mumble in Twistopia. We articulate with intent.",
-      "Tongue-cramp? Or just a lack of focus? Either way, it's sloppy.",
-      "That's a 'DNF' in my book. Back to the fundamentals.",
+      "Oof, a bit of a tongue-snag there.",
+      "Drop and give me twenty 'Red Lorries'!",
+      "Don't skip tongue day!",
+      "Focus! Your vowels are wobbling!",
+      "Back to the bench! Let's work on that form.",
+      "That was more of a vocal-sprain than a set.",
     ],
     IDLE: [
-      "I wonder if 'Lex' is the most aerodynamically efficient name possible.",
-      "Staring at the dot grid... it's like graph paper for my soul.",
-      "Just thinking about the friction coefficient of a well-placed fricative.",
-      "Is it weird that I find the letter 'Q' unnecessarily flamboyant?",
-      "Efficiency is key. Why use ten words when three sharp ones suffice?",
-      "Analyzing your previous set... room for marginal gains in the dental region.",
+      "Just counting my acorns... and your stumbles!",
+      "Is it lunchtime yet? I crave linguistic fiber!",
+      "Did you know 'sibilance' has three S's? Cardio!",
+      "I should've been a poet, but I like sweatbands too much.",
+      "Vocal fry is for bacon, not for Twistopia!",
+      "Keep practicing, syllable-squatter!",
+      "A quick nap would really help my diphthongs.",
+      "Thinking about the physics of the letter 'P'.",
+      "I wonder if 'Lex' is a monosyllabic name... efficient!",
     ],
     CLICKED: [
-      "Teleporting to a higher vantage point. Better acoustics here.",
-      "Careful with the fur. It's precision-engineered for low drag.",
-      "I'm as nimble as a dangling participle!",
-      "Tactical repositioning engaged. Can't coach from a static position.",
-      "Squeak! My tail is for balance, not for grabbing!",
+      "Hey! Watch the fur, coach is busy!",
+      "Teleporting for better acoustics!",
+      "I'm as nimble as a well-placed adjective!",
+      "Squeak! Watch the tail!",
+      "Personal space! Use your words, not your fingers!",
+      "Precision teleportation engaged!",
+      "Stop poke-coaching me!",
+      "My tail provides aerodynamic stability during high-speed diction.",
     ]
   }), []);
 
@@ -101,23 +112,24 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
       let newTop: string, newLeft: string;
       const side = Math.floor(Math.random() * 4); 
 
+      // Improved safe-zone logic to keep him in the margins
       switch(side) {
         case 0: // Top edge
-          newTop = (Math.random() * 8 + 4) + '%';
-          newLeft = (Math.random() * 70 + 15) + '%';
+          newTop = (Math.random() * 10 + 5) + '%';
+          newLeft = (Math.random() * 80 + 10) + '%';
           break;
         case 1: // Bottom edge
-          newTop = (Math.random() * 8 + 88) + '%';
-          newLeft = (Math.random() * 70 + 15) + '%';
+          newTop = (Math.random() * 10 + 85) + '%';
+          newLeft = (Math.random() * 80 + 10) + '%';
           break;
         case 2: // Left edge
-          newTop = (Math.random() * 60 + 20) + '%';
-          newLeft = (Math.random() * 8 + 4) + '%';
+          newTop = (Math.random() * 70 + 15) + '%';
+          newLeft = (Math.random() * 10 + 5) + '%';
           break;
         case 3: // Right edge
         default:
-          newTop = (Math.random() * 60 + 20) + '%';
-          newLeft = (Math.random() * 8 + 88) + '%';
+          newTop = (Math.random() * 70 + 15) + '%';
+          newLeft = (Math.random() * 10 + 85) + '%';
           break;
       }
 
@@ -132,17 +144,35 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
     }, 400);
   }, [comments, triggerBubble]);
 
+  // Handle bubble flip and alignment to avoid screen edges
   const bubbleStyles = useMemo(() => {
     const topNum = parseFloat(position.top);
     const leftNum = parseFloat(position.left);
-    let styles: React.CSSProperties = { position: 'absolute', width: '13rem' };
+    
+    let styles: React.CSSProperties = {
+      position: 'absolute',
+      width: '12rem',
+    };
 
-    if (topNum < 30) styles.top = '115%';
-    else styles.bottom = '115%';
+    // Vertical positioning
+    if (topNum < 30) {
+      styles.top = '115%';
+    } else {
+      styles.bottom = '115%';
+    }
 
-    if (leftNum < 25) { styles.left = '20%'; styles.transform = 'none'; }
-    else if (leftNum > 75) { styles.right = '20%'; styles.left = 'auto'; styles.transform = 'none'; }
-    else { styles.left = '50%'; styles.transform = 'translateX(-50%)'; }
+    // Horizontal alignment to prevent clipping
+    if (leftNum < 25) {
+      styles.left = '20%';
+      styles.transform = 'none';
+    } else if (leftNum > 75) {
+      styles.right = '20%';
+      styles.left = 'auto';
+      styles.transform = 'none';
+    } else {
+      styles.left = '50%';
+      styles.transform = 'translateX(-50%)';
+    }
 
     return styles;
   }, [position]);
@@ -150,9 +180,13 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
   const arrowStyles = useMemo(() => {
     const topNum = parseFloat(position.top);
     const leftNum = parseFloat(position.left);
+    
     let styles: React.CSSProperties = {
-      position: 'absolute', width: '0', height: '0',
-      borderLeft: '8px solid transparent', borderRight: '8px solid transparent',
+      position: 'absolute',
+      width: '0',
+      height: '0',
+      borderLeft: '8px solid transparent',
+      borderRight: '8px solid transparent',
     };
 
     if (topNum < 30) {
@@ -165,9 +199,15 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
       styles.transform = 'translateY(-1px)';
     }
 
-    if (leftNum < 25) styles.left = '10%';
-    else if (leftNum > 75) { styles.right = '10%'; styles.left = 'auto'; }
-    else { styles.left = '50%'; styles.transform += ' translateX(-50%)'; }
+    if (leftNum < 25) {
+      styles.left = '10%';
+    } else if (leftNum > 75) {
+      styles.right = '10%';
+      styles.left = 'auto';
+    } else {
+      styles.left = '50%';
+      styles.transform += ' translateX(-50%)';
+    }
 
     return styles;
   }, [position]);
@@ -179,22 +219,24 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
         setIsBlinking(true);
         setTimeout(() => setIsBlinking(false), 150);
       }
-    }, 3500);
+    }, 3000);
 
     const eyeInterval = setInterval(() => {
       if (Math.random() > 0.6) {
-        setPupilOffset({ x: (Math.random() - 0.5) * 6, y: (Math.random() - 0.5) * 4 });
-        setTimeout(() => setPupilOffset({ x: 0, y: 0 }), 1200);
+        setPupilOffset({
+          x: (Math.random() - 0.5) * 8,
+          y: (Math.random() - 0.5) * 5
+        });
+        setTimeout(() => setPupilOffset({ x: 0, y: 0 }), 1000);
       }
-    }, 5000);
+    }, 4000);
 
     const gestureInterval = setInterval(() => {
-      // Much lower frequency for random bouncing
-      if (Math.random() > 0.9 && gameState === GameState.MENU) {
+      if (Math.random() > 0.8 && gameState === GameState.MENU) {
         setGesture('bounce');
-        setTimeout(() => setGesture('none'), 800);
+        setTimeout(() => setGesture('none'), 1000);
       }
-    }, 15000);
+    }, 5000);
 
     return () => {
       clearInterval(blinkInterval);
@@ -206,25 +248,19 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
   // Periodic Random Commenting
   useEffect(() => {
     const idleCommentInterval = setInterval(() => {
-      if (gameState === GameState.MENU && !showBubble && Math.random() > 0.4) {
+      if (gameState === GameState.MENU && !showBubble && Math.random() > 0.5) {
         const idleMoods: Expression[] = ['thinking', 'cool', 'sleepy', 'academic'];
         triggerBubble(comments.IDLE[Math.floor(Math.random() * comments.IDLE.length)]);
         setExpression(idleMoods[Math.floor(Math.random() * idleMoods.length)]);
       }
-    }, 25000); // Increased interval to reduce chatter
+    }, 15000);
 
     return () => clearInterval(idleCommentInterval);
   }, [gameState, showBubble, comments, triggerBubble]);
 
-  // Game State Reactions - Reduced Jumpiness
+  // Game State Reactions
   useEffect(() => {
-    // Only teleport on significant state changes (Entering Menu, Loading, Result)
-    // Avoid teleporting on PLAYING -> GRADING to prevent distraction during focus
-    const majorTransitions = [GameState.MENU, GameState.LOADING_TWISTER, GameState.RESULT];
-    if (majorTransitions.includes(gameState) && lastStateRef.current !== gameState) {
-       teleport();
-    }
-    lastStateRef.current = gameState;
+    if (gameState !== GameState.MENU) teleport();
     
     let mood: Expression = 'academic';
     let msg = "";
@@ -258,11 +294,8 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
         break;
     }
     setExpression(mood);
-    // Don't override user interaction bubble
-    if (!showBubble || gameState !== GameState.MENU) {
-      triggerBubble(msg);
-    }
-  }, [gameState, score, comments, teleport, triggerBubble, showBubble]);
+    triggerBubble(msg);
+  }, [gameState, score, comments, teleport, triggerBubble]);
 
   return (
     <div 
@@ -274,8 +307,9 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
         teleport(true);
       }}
     >
+      {/* Speech Bubble Container */}
       <div 
-        className={`bg-surface border-2 border-ink p-3 rounded-2xl shadow-hard-sm transition-all duration-300 pointer-events-none z-50 ${showBubble ? 'opacity-100 scale-100' : 'opacity-0 scale-90 translate-y-2'}`}
+        className={`bg-surface border-2 border-ink p-3 rounded-2xl shadow-hard-sm transition-all duration-300 pointer-events-none z-50 ${showBubble ? 'opacity-100' : 'opacity-0 scale-90 translate-y-2'}`}
         style={bubbleStyles}
       >
         <p className="text-[11px] font-bold text-ink leading-tight text-center italic">
@@ -284,123 +318,155 @@ export const Mascot: React.FC<MascotProps> = ({ gameState, score }) => {
         <div style={arrowStyles}></div>
       </div>
 
-      <div className={`w-24 h-24 md:w-32 md:h-32 relative transition-transform duration-300 group-hover:scale-105 active:scale-95 ${gesture === 'bounce' ? 'animate-bounce' : gesture === 'shake' ? 'animate-shake' : ''}`}>
-        <svg viewBox="0 0 200 200" className={`w-full h-full drop-shadow-lg overflow-visible ${gesture === 'glow' ? 'animate-pulse' : ''}`}>
+      {/* Lex the Syllable-Squirrel */}
+      <div className={`w-28 h-28 md:w-36 md:h-36 relative transition-transform duration-300 group-hover:scale-110 active:scale-95 ${gesture === 'bounce' ? 'animate-bounce' : gesture === 'shake' ? 'animate-shake' : ''}`}>
+        <svg viewBox="0 0 200 200" className={`w-full h-full drop-shadow-xl overflow-visible ${gesture === 'glow' ? 'animate-pulse' : ''}`}>
           <style>
             {`
-              @keyframes lex-shake {
+              @keyframes shake {
                 0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-3px) rotate(-1deg); }
-                75% { transform: translateX(3px) rotate(1deg); }
+                25% { transform: translateX(-5px) rotate(-2deg); }
+                75% { transform: translateX(5px) rotate(2deg); }
               }
-              .animate-shake { animation: lex-shake 0.25s ease-in-out infinite; }
-              @keyframes lex-breathe {
+              .animate-shake { animation: shake 0.2s ease-in-out infinite; }
+              @keyframes breathe {
                 0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.02); }
+                50% { transform: scale(1.04); }
               }
-              .lex-body-group { animation: lex-breathe 4s ease-in-out infinite; transform-origin: center 160px; }
-              .lex-tail { transform-origin: 100px 140px; transition: transform 0.6s ease; }
+              .lex-body-group { animation: breathe 3s ease-in-out infinite; transform-origin: center 150px; }
+              .lex-tail { transform-origin: 100px 140px; transition: transform 0.5s ease; }
             `}
           </style>
 
-          <g className="lex-tail group-hover:rotate-[3deg]">
-            <path d="M120,150 Q200,150 210,90 Q220,20 140,10 Q80,5 70,80" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
-            <path d="M140,30 Q170,50 160,95" fill="none" stroke="#F2EFE9" strokeWidth="8" strokeLinecap="round" opacity="0.3" />
+          {/* FLUFFY TAIL */}
+          <g className="lex-tail group-hover:rotate-[5deg]">
+            <path 
+              d="M120,150 Q200,150 210,90 Q220,20 140,10 Q80,5 70,80" 
+              fill="#B86B62" 
+              stroke="#2D2825" 
+              strokeWidth="5" 
+            />
+            <path d="M140,30 Q170,50 160,95" fill="none" stroke="#F2EFE9" strokeWidth="10" strokeLinecap="round" opacity="0.3" />
           </g>
 
           <g className="lex-body-group">
+            {/* LITTLE LEGS */}
             <g>
-              <ellipse cx="75" cy="182" rx="12" ry="8" fill="#B86B62" stroke="#2D2825" strokeWidth="4" />
-              <ellipse cx="125" cy="182" rx="12" ry="8" fill="#B86B62" stroke="#2D2825" strokeWidth="4" />
-              <line x1="68" y1="185" x2="68" y2="187" stroke="#2D2825" strokeWidth="1.5" strokeLinecap="round" />
-              <line x1="75" y1="186" x2="75" y2="188" stroke="#2D2825" strokeWidth="1.5" strokeLinecap="round" />
-              <line x1="125" y1="186" x2="125" y2="188" stroke="#2D2825" strokeWidth="1.5" strokeLinecap="round" />
-              <line x1="132" y1="185" x2="132" y2="187" stroke="#2D2825" strokeWidth="1.5" strokeLinecap="round" />
+              <ellipse cx="75" cy="182" rx="14" ry="10" fill="#B86B62" stroke="#2D2825" strokeWidth="4" />
+              <ellipse cx="125" cy="182" rx="14" ry="10" fill="#B86B62" stroke="#2D2825" strokeWidth="4" />
+              {/* Feet Details */}
+              <line x1="68" y1="185" x2="68" y2="188" stroke="#2D2825" strokeWidth="2" strokeLinecap="round" />
+              <line x1="75" y1="186" x2="75" y2="189" stroke="#2D2825" strokeWidth="2" strokeLinecap="round" />
+              <line x1="82" y1="185" x2="82" y2="188" stroke="#2D2825" strokeWidth="2" strokeLinecap="round" />
+              <line x1="118" y1="185" x2="118" y2="188" stroke="#2D2825" strokeWidth="2" strokeLinecap="round" />
+              <line x1="125" y1="186" x2="125" y2="189" stroke="#2D2825" strokeWidth="2" strokeLinecap="round" />
+              <line x1="132" y1="185" x2="132" y2="188" stroke="#2D2825" strokeWidth="2" strokeLinecap="round" />
             </g>
 
-            <ellipse cx="100" cy="150" rx="55" ry="50" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
-            <ellipse cx="100" cy="155" rx="38" ry="32" fill="#F2EFE9" />
+            {/* ROUND CHUBBY BODY */}
+            <ellipse cx="100" cy="150" rx="60" ry="55" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
+            <ellipse cx="100" cy="155" rx="42" ry="38" fill="#F2EFE9" />
 
-            <path d="M45,100 Q45,35 100,35 Q155,35 155,100 Q155,145 100,145 Q45,145 45,100" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
-            <path d="M50,95 Q50,55 100,55 Q150,55 150,95 Q150,135 100,135 Q50,135 50,95" fill="#F2EFE9" opacity="0.2" />
+            {/* HEAD */}
+            <path 
+              d="M45,100 Q45,35 100,35 Q155,35 155,100 Q155,145 100,145 Q45,145 45,100" 
+              fill="#B86B62" 
+              stroke="#2D2825" 
+              strokeWidth="5" 
+            />
+            
+            {/* Muzzle Highlights */}
+            <path d="M50,95 Q50,55 100,55 Q150,55 150,95 Q150,135 100,135 Q50,135 50,95" fill="#F2EFE9" opacity="0.25" />
 
+            {/* EARS with Tufts */}
             <g>
-              <path d="M60,50 L45,12 Q70,8 80,45 Z" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
-              <path d="M140,50 L155,12 Q130,8 120,45 Z" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
-              <path d="M58,45 L54,28 Q62,24 68,40" fill="#F2EFE9" opacity="0.4" />
-              <path d="M142,45 L146,28 Q138,24 132,40" fill="#F2EFE9" opacity="0.4" />
+              <path d="M60,50 L45,10 Q70,5 80,45 Z" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
+              <path d="M140,50 L155,10 Q130,5 120,45 Z" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
+              <path d="M58,45 L54,25 Q62,20 68,40" fill="#F2EFE9" opacity="0.4" />
+              <path d="M142,45 L146,25 Q138,20 132,40" fill="#F2EFE9" opacity="0.4" />
             </g>
 
+            {/* SWEATBAND */}
             {(expression === 'determined' || expression === 'academic' || expression === 'thinking') && (
-              <rect x="52" y="52" width="96" height="14" fill="#E8C574" stroke="#2D2825" strokeWidth="4" rx="2" />
+              <rect x="52" y="52" width="96" height="16" fill="#E8C574" stroke="#2D2825" strokeWidth="4" rx="3" />
             )}
 
+            {/* LARGE EXPRESSIVE EYES */}
             <g transform={`translate(${pupilOffset.x}, ${pupilOffset.y})`}>
-              <circle cx="82" cy="98" r="15" fill="white" stroke="#2D2825" strokeWidth="1" />
-              <circle cx="118" cy="98" r="15" fill="white" stroke="#2D2825" strokeWidth="1" />
-              <circle cx="82" cy="98" r="11" fill="#2D2825" />
-              <circle cx="118" cy="98" r="11" fill="#2D2825" />
-              <circle cx="85" cy="93" r="4" fill="white" />
-              <circle cx="121" cy="93" r="4" fill="white" />
-              <circle cx="79" cy="103" r="1.5" fill="white" opacity="0.6" />
-              <circle cx="115" cy="103" r="1.5" fill="white" opacity="0.6" />
+              <circle cx="82" cy="98" r="16" fill="white" stroke="#2D2825" strokeWidth="1" />
+              <circle cx="118" cy="98" r="16" fill="white" stroke="#2D2825" strokeWidth="1" />
+              
+              <circle cx="82" cy="98" r="12" fill="#2D2825" />
+              <circle cx="118" cy="98" r="12" fill="#2D2825" />
+              
+              <circle cx="86" cy="92" r="5" fill="white" />
+              <circle cx="122" cy="92" r="5" fill="white" />
+              <circle cx="78" cy="104" r="2" fill="white" opacity="0.6" />
+              <circle cx="114" cy="104" r="2" fill="white" opacity="0.6" />
             </g>
 
+            {/* EYE OVERLAYS */}
             {isBlinking && (
                <g>
-                 <ellipse cx="82" cy="98" rx="16" ry="16" fill="#B86B62" stroke="#2D2825" strokeWidth="3" />
-                 <ellipse cx="118" cy="98" rx="16" ry="16" fill="#B86B62" stroke="#2D2825" strokeWidth="3" />
-                 <line x1="66" y1="98" x2="98" y2="98" stroke="#2D2825" strokeWidth="4" strokeLinecap="round" />
-                 <line x1="102" y1="98" x2="134" y2="98" stroke="#2D2825" strokeWidth="4" strokeLinecap="round" />
+                 <ellipse cx="82" cy="98" rx="17" ry="17" fill="#B86B62" stroke="#2D2825" strokeWidth="3" />
+                 <ellipse cx="118" cy="98" rx="17" ry="17" fill="#B86B62" stroke="#2D2825" strokeWidth="3" />
+                 <line x1="64" y1="98" x2="100" y2="98" stroke="#2D2825" strokeWidth="4" />
+                 <line x1="100" y1="98" x2="136" y2="98" stroke="#2D2825" strokeWidth="4" />
                </g>
             )}
 
             {expression === 'cool' && (
               <g>
-                 <rect x="62" y="90" width="76" height="16" rx="3" fill="#2D2825" />
-                 <path d="M62,98 L52,92 M138,98 L148,92" stroke="#2D2825" strokeWidth="2.5" />
-                 <line x1="95" y1="98" x2="105" y2="98" stroke="#F2EFE9" strokeWidth="1.5" opacity="0.4" />
+                 <rect x="60" y="88" width="80" height="20" rx="4" fill="#2D2825" />
+                 <path d="M60,98 L50,90 M140,98 L150,90" stroke="#2D2825" strokeWidth="3" />
+                 <line x1="95" y1="98" x2="105" y2="98" stroke="#F2EFE9" strokeWidth="2" opacity="0.5" />
               </g>
             )}
 
             {expression === 'sleepy' && (
               <g>
-                <path d="M68,98 Q82,106 96,98" fill="none" stroke="#2D2825" strokeWidth="3" strokeLinecap="round" />
-                <path d="M104,98 Q118,106 132,98" fill="none" stroke="#2D2825" strokeWidth="3" strokeLinecap="round" />
+                <path d="M66,98 Q82,108 98,98" fill="none" stroke="#2D2825" strokeWidth="3" strokeLinecap="round" />
+                <path d="M102,98 Q118,108 134,98" fill="none" stroke="#2D2825" strokeWidth="3" strokeLinecap="round" />
               </g>
             )}
 
             {expression === 'grumpy' && (
                <g>
-                 <path d="M68,84 L94,92" stroke="#2D2825" strokeWidth="4" strokeLinecap="round" />
-                 <path d="M132,84 L106,92" stroke="#2D2825" strokeWidth="4" strokeLinecap="round" />
+                 <path d="M68,82 L96,92" stroke="#2D2825" strokeWidth="5" strokeLinecap="round" />
+                 <path d="M132,82 L104,92" stroke="#2D2825" strokeWidth="5" strokeLinecap="round" />
                </g>
             )}
 
             {expression === 'academic' && !isBlinking && (
               <g opacity="0.8">
-                <circle cx="82" cy="98" r="20" fill="none" stroke="#2D2825" strokeWidth="3" />
-                <circle cx="118" cy="98" r="20" fill="none" stroke="#2D2825" strokeWidth="3" />
+                <circle cx="82" cy="98" r="21" fill="none" stroke="#2D2825" strokeWidth="3" />
+                <circle cx="118" cy="98" r="21" fill="none" stroke="#2D2825" strokeWidth="3" />
+                <line x1="101" y1="98" x2="99" y2="98" stroke="#2D2825" strokeWidth="4" />
               </g>
             )}
 
-            <circle cx="100" cy="115" r="4.5" fill="#2D2825" />
+            {/* NOSE & MOUTH */}
+            <circle cx="100" cy="115" r="5" fill="#2D2825" />
             {expression === 'happy' || expression === 'love' ? (
-               <path d="M86,122 Q100,138 114,122" fill="none" stroke="#2D2825" strokeWidth="3.5" strokeLinecap="round" />
+               <path d="M85,122 Q100,140 115,122" fill="none" stroke="#2D2825" strokeWidth="4" strokeLinecap="round" />
             ) : expression === 'grumpy' ? (
-               <path d="M92,127 Q100,122 108,127" fill="none" stroke="#2D2825" strokeWidth="3.5" strokeLinecap="round" />
+               <path d="M90,128 Q100,122 110,128" fill="none" stroke="#2D2825" strokeWidth="4" strokeLinecap="round" />
+            ) : expression === 'sleepy' ? (
+               <circle cx="100" cy="126" r="6" fill="none" stroke="#2D2825" strokeWidth="2" opacity="0.5" />
             ) : (
-               <path d="M92,124 Q100,129 108,124" fill="none" stroke="#2D2825" strokeWidth="2.5" strokeLinecap="round" />
+               <path d="M92,124 Q100,130 108,124" fill="none" stroke="#2D2825" strokeWidth="3" strokeLinecap="round" />
             )}
             
-            <circle cx="62" cy="120" r="8" fill="#B86B62" opacity="0.3" />
-            <circle cx="138" cy="120" r="8" fill="#B86B62" opacity="0.3" />
+            {/* BLUSH */}
+            <circle cx="62" cy="120" r="9" fill="#B86B62" opacity="0.4" />
+            <circle cx="138" cy="120" r="9" fill="#B86B62" opacity="0.4" />
 
-            <circle cx="70" cy="155" r="12" fill="#B86B62" stroke="#2D2825" strokeWidth="4" />
-            <circle cx="130" cy="155" r="12" fill="#B86B62" stroke="#2D2825" strokeWidth="4" />
+            {/* PAWS */}
+            <circle cx="70" cy="155" r="14" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
+            <circle cx="130" cy="155" r="14" fill="#B86B62" stroke="#2D2825" strokeWidth="5" />
             
             {expression === 'love' && (
-              <path d="M165,75 Q175,65 185,75 Q195,85 175,105 Q155,85 165,75" fill="#B86B62" stroke="#2D2825" strokeWidth="2.5" />
+              <path d="M165,75 Q175,65 185,75 Q195,85 175,105 Q155,85 165,75" fill="#B86B62" stroke="#2D2825" strokeWidth="3" />
             )}
           </g>
         </svg>

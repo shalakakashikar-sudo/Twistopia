@@ -3,27 +3,33 @@ import { Difficulty, GradingResult, Twister } from "../types";
 import { decodeAudioData, playAudioBuffer } from "../utils/audioUtils";
 import { FALLBACK_TWISTERS } from "../data/fallbackTwisters";
 
-// Robustly retrieve API Key from various common frontend build configurations
+// Robustly retrieve API Key
 const getApiKey = (): string => {
+  let key = "";
+  
+  // 1. Try Vite standard (import.meta.env)
   try {
-    // Check for Vite prefixed variable
     // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
       // @ts-ignore
-      return import.meta.env.VITE_API_KEY;
-    }
-    // Check for Create React App prefixed variable
-    if (typeof process !== 'undefined' && process.env?.REACT_APP_API_KEY) {
-      return process.env.REACT_APP_API_KEY;
-    }
-    // Check for standard variable (custom builds/Next.js public)
-    if (typeof process !== 'undefined' && process.env?.API_KEY) {
-      return process.env.API_KEY;
+      key = import.meta.env.VITE_API_KEY;
     }
   } catch (e) {
-    // Ignore errors in strict environments
+    // Ignore access errors
   }
-  return '';
+
+  // 2. Try process.env (Vercel/Node fallback)
+  if (!key && typeof process !== 'undefined' && process.env) {
+    key = process.env.VITE_API_KEY || process.env.REACT_APP_API_KEY || process.env.API_KEY || "";
+  }
+
+  if (key) {
+    console.log("Twistopia: API Key detected successfully.");
+  } else {
+    console.warn("Twistopia: No API Key found. App running in Offline/Fallback mode.");
+  }
+
+  return key;
 };
 
 const apiKey = getApiKey();
@@ -33,7 +39,6 @@ const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 export const generateTongueTwister = async (difficulty: Difficulty): Promise<Twister> => {
   // If no AI instance (missing key), fallback immediately
   if (!ai) {
-    console.warn("API Key missing. Using offline database.");
     return getFallbackTwister(difficulty);
   }
 
@@ -87,7 +92,7 @@ export const gradePronunciation = async (
 ): Promise<GradingResult> => {
   
   if (!ai) {
-    console.warn("API Key missing. Using offline grading simulation.");
+    console.warn("API Key missing. Cannot grade.");
     return getFallbackGrading();
   }
   
@@ -136,18 +141,18 @@ export const gradePronunciation = async (
     return JSON.parse(text) as GradingResult;
 
   } catch (error) {
-    console.warn("Gemini grading failed, switching to offline simulation.", error);
+    console.warn("Gemini grading failed.", error);
     return getFallbackGrading();
   }
 };
 
 const getFallbackGrading = (): GradingResult => {
-  // Simulate a generally positive result so the user isn't discouraged when offline
-  const randomScore = Math.floor(Math.random() * (95 - 75 + 1)) + 75;
+  // If we are here, the AI failed or key is missing.
+  // We cannot accurately grade offline.
   return {
-    score: randomScore,
-    feedback: "Offline Mode: Good effort! I can't check your accuracy without an internet connection, but you sounded confident!",
-    isCorrect: true
+    score: 0,
+    feedback: "⚠️ AI Offline: Cannot grade pronunciation. Please check your API Key configuration in Vercel.",
+    isCorrect: false
   };
 };
 

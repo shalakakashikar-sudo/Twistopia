@@ -55,45 +55,44 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
     }
   };
 
-  const difficultyColor = 
-    twister.difficulty === 'Easy' ? 'text-green-600 bg-green-50' : 
-    twister.difficulty === 'Medium' ? 'text-orange-600 bg-orange-50' : 'text-red-600 bg-red-50';
-
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-8 animate-fade-in py-6">
+    <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-6 animate-fade-in py-4">
       
-      {/* Navigation */}
-      <div className="w-full flex justify-between items-center px-2">
-        <button onClick={onBack} className="text-slate-400 hover:text-slate-800 transition-colors flex items-center gap-2 text-sm font-medium">
-          <span className="text-xl">←</span> Menu
+      {/* Navigation & Header */}
+      <div className="w-full flex justify-between items-center px-4">
+        <button onClick={onBack} className="text-ink/60 hover:text-ink transition-colors flex items-center gap-2 text-sm font-bold uppercase tracking-widest border-b-2 border-transparent hover:border-ink">
+          <span className="text-lg">←</span> Gym Lobby
         </button>
-        <span className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase ${difficultyColor}`}>
-          {twister.difficulty}
-        </span>
+        <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-ink"></span>
+            <span className="text-sm font-display font-bold text-ink">Circuit: {twister.difficulty}</span>
+        </div>
       </div>
 
-      {/* Main Card */}
-      <div className="bg-white rounded-[2.5rem] shadow-soft p-10 md:p-16 w-full text-center relative border border-slate-50 flex flex-col items-center">
+      {/* Main Card - Book/Index Card Style */}
+      <div className="bg-surface rounded-sm border-2 border-ink shadow-hard p-8 md:p-14 w-full text-center relative flex flex-col items-center min-h-[400px] justify-center">
         
-        {/* Repetition Target */}
-        <div className="absolute top-8 right-8">
-          <span className="bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-full tracking-widest shadow-md">
-             TARGET: {twister.repetitionCount}x
+        {/* Decorative corner lines */}
+        <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-ink/20"></div>
+        <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-ink/20"></div>
+        <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-ink/20"></div>
+        <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-ink/20"></div>
+
+        {/* Topic Tag */}
+        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-accent px-6 py-2 border-2 border-ink rounded-full shadow-hard-sm rotate-[-2deg]">
+          <span className="text-ink font-bold text-xs uppercase tracking-widest">
+            {twister.topic}
           </span>
         </div>
         
-        <span className="text-slate-400 text-xs font-bold tracking-[0.2em] uppercase mb-8">
-          {twister.topic}
-        </span>
-        
-        <h2 className="text-3xl md:text-5xl font-display font-medium text-slate-800 leading-snug mb-10 max-w-3xl">
+        <h2 className="text-4xl md:text-6xl font-display text-ink leading-tight mb-8 mt-4 relative z-10">
           "{twister.text}"
         </h2>
 
         {twister.repetitionCount > 1 && (
-            <div className="flex items-center gap-2 text-slate-500 bg-slate-50 px-4 py-2 rounded-xl mb-8">
-                <span className="text-lg">🔥</span> 
-                <span className="text-sm font-medium">Repeat {twister.repetitionCount} times fast</span>
+            <div className="flex items-center gap-3 bg-paper border-2 border-ink px-5 py-2 rounded-full mb-8 transform rotate-1">
+                <span className="text-xl">⚡️</span> 
+                <span className="text-sm font-bold text-ink">Target Sets: {twister.repetitionCount}x</span>
             </div>
         )}
 
@@ -102,34 +101,33 @@ export const Gameplay: React.FC<GameplayProps> = ({ twister, onGrade, onBack, is
           size="sm"
           onClick={handlePlayTTS}
           disabled={isPlayingAudio || isGrading || isRecording}
-          className="text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-slate-800 hover:border-slate-300"
+          className="border-ink text-ink hover:bg-ink hover:text-white"
         >
-          {isPlayingAudio ? 'Playing...' : 'Hear Pronunciation'}
+          {isPlayingAudio ? 'Coach is reading...' : 'Listen to Proper Form'}
         </Button>
       </div>
 
-      {/* Recording Interface */}
-      <div className="flex flex-col items-center space-y-6">
+      {/* Recording Interface - "The Mic" */}
+      <div className="flex flex-col items-center space-y-6 mt-4">
          <div className={`relative transition-all duration-300 ${isRecording ? 'scale-110' : 'scale-100'}`}>
-           {isRecording && (
-             <span className="absolute -inset-6 rounded-full bg-red-100 opacity-50 animate-pulse"></span>
-           )}
            <Button
              size="lg"
              variant={isRecording ? 'secondary' : 'primary'}
              onClick={handleToggleRecord}
              disabled={isGrading || isPlayingAudio}
-             className={`w-20 h-20 !rounded-full !p-0 flex items-center justify-center text-3xl shadow-glow transition-all duration-300 ${isRecording ? 'bg-red-500 hover:bg-red-600 shadow-red-200' : 'bg-slate-900 hover:bg-black'}`}
+             className={`w-24 h-24 !rounded-full !p-0 flex items-center justify-center text-4xl border-2 border-ink !shadow-hard transition-all duration-300`}
            >
              {isRecording ? '⏹' : '🎙'}
            </Button>
          </div>
          
-         <p className="text-slate-400 font-medium text-sm tracking-wide">
-           {isGrading ? 'AI Judge is analyzing...' : 
-            isRecording ? 'Recording... Enunciate clearly!' : 
-            'Tap to record'}
-         </p>
+         <div className="bg-surface border-2 border-ink px-6 py-2 rounded-full shadow-hard-sm">
+            <p className="text-ink font-bold text-sm tracking-wide">
+            {isGrading ? 'Head Coach is evaluating...' : 
+                isRecording ? 'Lifting... Push those syllables!' : 
+                'Begin Your Reps'}
+            </p>
+         </div>
       </div>
     </div>
   );

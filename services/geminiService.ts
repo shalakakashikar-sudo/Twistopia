@@ -63,9 +63,9 @@ export const generateTongueTwister = async (difficulty: Difficulty, level: numbe
   }
 
   try {
-    const prompt = `Generate a creative, fun, and challenging tongue twister in English. 
+    const prompt = `Generate a creative, fun, and challenging tongue twister in English for 'Twistopia: The Poet's Gym'. 
     Difficulty Level: ${difficulty}. 
-    The text should be a single coherent phrase or sentence.
+    The text should be a single coherent phrase or sentence that feels like a 'vocal workout'.
     Return JSON only.`;
 
     const response = await ai.models.generateContent({
@@ -77,7 +77,7 @@ export const generateTongueTwister = async (difficulty: Difficulty, level: numbe
           type: Type.OBJECT,
           properties: {
             text: { type: Type.STRING, description: "The tongue twister text" },
-            topic: { type: Type.STRING, description: "A short 1-2 word topic/theme of the twister" },
+            topic: { type: Type.STRING, description: "A short 1-2 word topic/theme (e.g. Sibilance Training, Plosive Power)" },
             difficulty: { type: Type.STRING, enum: ["Easy", "Medium", "Hard"] }
           },
           required: ["text", "topic", "difficulty"]
@@ -120,19 +120,21 @@ export const gradePronunciation = async (
   
   try {
     const prompt = `
-      You are a strict but fair judge in a tongue twister game.
+      You are the Head Vocal Coach at 'Twistopia: The Poet's Gym'.
       
-      The Challenge: "${twister.text}"
-      REQUIRED REPETITIONS: ${twister.repetitionCount} times.
+      Challenge: "${twister.text}"
+      Target Reps: ${twister.repetitionCount} sets.
       
-      I will provide an audio recording. 
-      1. Check if the user said the phrase exactly ${twister.repetitionCount} times.
-      2. If they said it fewer times, the maximum score is 50.
-      3. Analyze pronunciation accuracy, clarity, and speed.
+      Review the athlete's performance in the provided audio.
+      1. Verify if they hit exactly ${twister.repetitionCount} reps of the phrase.
+      2. Analyze their 'vocal form': clarity, rhythm, and speed.
+      3. If they missed reps or stuttered, mark it as 'Poor Form'.
       
-      Return a JSON object with:
+      Provide feedback in a gym/coaching tone. Use terms like 'sets', 'reps', 'vocal muscles', 'cardio', 'form'.
+      
+      Return a JSON object:
       - score: integer 0-100.
-      - feedback: A short comment. Mention if they missed repetitions.
+      - feedback: A short coaching note. Mention specific vocal muscle tips.
       - isCorrect: boolean (true if score > 75).
     `;
 
@@ -181,7 +183,7 @@ export const gradePronunciation = async (
 const getFallbackGrading = (): GradingResult => {
   return {
     score: 0,
-    feedback: "⚠️ AI Offline: Cannot grade. Check API Key.",
+    feedback: "⚠️ Gym Offline: Equipment failure. Check API connection.",
     isCorrect: false,
     xpEarned: 0
   };

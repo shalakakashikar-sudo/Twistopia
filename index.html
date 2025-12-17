@@ -5,25 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Twistopia</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Poppins', 'sans-serif'],
-              display: ['Fredoka', 'sans-serif'],
+              sans: ['Quicksand', 'sans-serif'],
+              display: ['DM Serif Display', 'serif'],
             },
             colors: {
-              primary: '#6366f1', // Indigo 500
-              secondary: '#f43f5e', // Rose 500
-              accent: '#8b5cf6', // Violet 500
-              background: '#f8fafc', // Slate 50 - Very light cool gray
-              surface: '#ffffff',
+              primary: '#5D8E97', // Teal from labels
+              secondary: '#B86B62', // Rust/Red from book
+              accent: '#E8C574', // Mustard from lightbulb
+              ink: '#2D2825', // Dark Warm Grey for text/borders
+              paper: '#F2EFE9', // Warm parchment background
+              surface: '#FFFEFA', // Slightly brighter paper for cards
             },
             boxShadow: {
-              'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-              'glow': '0 0 15px rgba(99, 102, 241, 0.3)',
+              'hard': '4px 4px 0px 0px #2D2825', // Hard vintage shadow
+              'hard-sm': '2px 2px 0px 0px #2D2825',
             }
           }
         }
@@ -31,19 +32,21 @@
     </script>
     <style>
       body {
-        background-color: #f8fafc;
-        color: #1e293b; /* Slate 800 */
+        background-color: #F2EFE9;
+        color: #2D2825;
+        background-image: radial-gradient(#2D2825 0.5px, transparent 0.5px);
+        background-size: 24px 24px; /* Subtle dot grid pattern */
       }
-      .blob {
-        position: absolute;
-        filter: blur(80px); /* Softer blur */
-        z-index: -1;
-        opacity: 0.4; /* More subtle */
-        animation: move 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+      /* Custom scrollbar for the vintage feel */
+      ::-webkit-scrollbar {
+        width: 8px;
       }
-      @keyframes move {
-        from { transform: translate(0, 0) scale(1); }
-        to { transform: translate(40px, -40px) scale(1.1); }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #D1CEC7;
+        border-radius: 4px;
       }
     </style>
   <script type="importmap">

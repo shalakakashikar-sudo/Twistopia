@@ -15,19 +15,20 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props 
 }) => {
-  const baseStyle = "font-sans font-medium rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 tracking-wide";
+  // Base style: Solid 2px border, hard shadow transform on hover
+  const baseStyle = "font-sans font-bold rounded-xl border-2 border-ink transition-all duration-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 tracking-wide";
   
   const variants = {
-    primary: "bg-primary hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20",
-    secondary: "bg-secondary hover:bg-rose-600 text-white shadow-lg shadow-rose-500/20",
-    accent: "bg-accent hover:bg-violet-600 text-white shadow-lg shadow-violet-500/20",
-    outline: "border border-current bg-transparent",
+    primary: "bg-primary text-white shadow-hard hover:bg-[#4A7C85]",
+    secondary: "bg-secondary text-white shadow-hard hover:bg-[#A65D54]",
+    accent: "bg-accent text-ink shadow-hard hover:bg-[#D4B05F]",
+    outline: "bg-transparent text-ink shadow-hard hover:bg-ink/5",
   };
 
   const sizes = {
-    sm: "px-5 py-2 text-sm",
-    md: "px-8 py-3 text-sm",
-    lg: "px-10 py-4 text-base",
+    sm: "px-4 py-1.5 text-sm",
+    md: "px-6 py-3 text-sm",
+    lg: "px-8 py-4 text-lg",
   };
 
   return (

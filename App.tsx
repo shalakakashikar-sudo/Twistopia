@@ -136,7 +136,7 @@ const App: React.FC = () => {
           )}
         </main>
         
-        <footer className="text-center text-gray-400 text-sm mt-8">
+        <footer className="text-center text-ink text-sm mt-8 opacity-80">
           Created by Shalaka Kashikar
         </footer>
       </div>
